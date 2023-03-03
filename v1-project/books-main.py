@@ -2,35 +2,32 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-book_list = {
-    'book_1': {'title': 'title one', 'author': 'author one'},
-    'book_2': {'title': 'title two', 'author': 'author two'},
-    'book_3': {'title': 'title three', 'author': 'author three'},
-    'book_5': {'title': 'title five', 'author': 'author five'},
-    'book_4': {'title': 'title four', 'author': 'author four'}
+pokemon_list = {
+    '1': {'name': 'Bulbasaur', 'Type': 'Grass', 'Previous': None, "evolve_level": 16},
+    '2': {'name': 'Ivysaur', 'Type': 'Grass', 'Previous': '1', "evolve_level": 36},
+    '3': {'name': 'Venasaur', 'Type': 'Grass', 'Previous': '2', "evolve_level": None},
+    '4': {'name': 'Charmander', 'Type': 'Fire', 'Previous': None, "evolve_level": 16},
+    '5': {'name': 'Charmeleon', 'Type': 'Fire', 'Previous': '4', "evolve_level": 36}
 }
 
 @app.get("/")
-async def read_all_books():
-    return book_list
+async def list_all_pokemon():
+    return "Welcome to the frontpage! Go to /pokemon to watch more."
 
-@app.get("/books/{book_name}")
-async def read_book(book_name: str):
-    return book_list[book_name]
+@app.get("/pokemon")
+async def read_all_books():
+    response = {"message": "You entered the /pokemon dir", 
+                "pokelist": pokemon_list}
+    return response
+
+@app.get("/pokemon/{number}") # Number is a path parameter. Lets try it in :8000/docs!
+async def read_book(number: str):
+    return pokemon_list[number]
 
 @app.post("/")
-async def create_book(book_title, book_author):
-    curr_book_id = 0
-    if(len(book_list) > 0):
-        # Search the max number of book id in the list. We do the for in case the books are not ordered
-        for book in book_list: # We loop through the ids
-            x = int(book.split('_')[-1])
-            if(x > curr_book_id):
-                print(curr_book_id)
-                curr_book_id = x
-    new_id = "book_" + str(curr_book_id + 1)
-    book_list[new_id] = {'title': book_title, 'author': book_author}
-    return book_list[new_id]
+async def add_pokemon(pokemon_number: str, pokemon_name: str):
+    pokemon_list[pokemon_number] = pokemon_name
+    return pokemon_list[pokemon_number]
 
 """
 Query params vs Path Params
